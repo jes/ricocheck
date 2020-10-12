@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+$SIG{ALRM} = sub { print "timeout\n"; exit 1; };
+
+alarm(5);
+
+my $rc = system("torsocks nc -v -w 5 -z it2j3z6t6ksumpzd.onion 9878 >/dev/null 2>&1");
+print "online\n" if $rc == 0;
+print "offline\n" if $rc != 0;
