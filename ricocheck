@@ -3,10 +3,18 @@
 use strict;
 use warnings;
 
+my $timeout = 5; # secs
+
+my $target = shift or die "usage: ricocheck TARGET\nExample: ricocheck it2j3z6t6ksumpzd\nThere's a bit of DWIM, in that \"ricochet:\" and \".onion\" are automatically stripped from the TARGET.\n";
+
+$target = lc $target;
+$target =~ s/\.onion$//;
+$target =~ s/^ricochet://;
+
 $SIG{ALRM} = sub { print "timeout\n"; exit 1; };
 
-alarm(5);
+alarm($timeout);
 
-my $rc = system("torsocks nc -v -w 5 -z it2j3z6t6ksumpzd.onion 9878 >/dev/null 2>&1");
+my $rc = system("torsocks", "nc", "-w", $timeout, "-z", "$target.onion", "9878");
 print "online\n" if $rc == 0;
 print "offline\n" if $rc != 0;
